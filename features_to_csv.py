@@ -9,9 +9,7 @@ import csv
 norm_rock_dir = "./dataset/rock/"
 norm_hiphop_dir = "./dataset/hiphop/"
 norm_rock_files = glob(norm_rock_dir + "*.wav")
-#norm_rock_files = list(map(os.path.basename, norm_rock_files))
 norm_hiphop_files = glob(norm_hiphop_dir + "*.wav")
-#norm_hiphop_files = list(map(os.path.basename, norm_hiphop_files))
 rock_genre_list = ["rock" for i in range(len(norm_rock_files))]
 hiphop_genre_list = ["hiphop" for i in range(len(norm_rock_files))]
 
@@ -28,15 +26,19 @@ fn_list_ii = [
 ]
 
 
-def get_feature_vector(ts, sr):
+def get_feature_vector(ts: np.ndarray, sr: int):
+    # Call feature extraction functions on all the files
     feat_i = [func(y=ts, sr=sr) for func in fn_list_i]
     feat_ii = [func(y=ts) for func in fn_list_ii]
+    # Compute the mean and standard deviation for the features of all files
     feat_vector_i = [(np.mean(x), np.std(x)) for x in feat_i]
     feat_vector_ii = [(np.mean(x), np.std(x)) for x in feat_ii]
     feat_vector_i = [item for tup in feat_vector_i for item in tup]
     feat_vector_ii = [item for t in feat_vector_ii for item in t]
+    # Combine and return the two different feature sets
     feature_vector = feat_vector_i + feat_vector_ii
     return feature_vector
+
 
 # Feature extraction
 norm_rock_feat = []
@@ -50,22 +52,24 @@ for file in norm_hiphop_files:
     feature_vector = get_feature_vector(ts, sr)
     norm_hiphop_feat.append(feature_vector)
 
-# Export to CSV File
+# Define CSV file needed info
 outfile = "song_features.csv"
-header = [
+headers = [
     "file_name",
     "genre",
     "chroma_stft_mean",
-    "chroma_stft_var",
+    "chroma_stft_dev",
     "spectral_centroid_mean",
-    "spectral_centroid_var",
+    "spectral_centroid_dev",
     "spectral_rolloff_mean",
-    "spectral_rolloff_var",
+    "spectral_rolloff_dev",
     "rms_mean",
-    "rms_var",
+    "rms_dev",
     "zero_crossing_rate_mean",
-    "zero_crossing_rate_var"
+    "zero_crossing_rate_dev"
 ]
+
+# Format arrays in way that CSV library likes
 norm_rock_files = list(map(os.path.basename, norm_rock_files))
 rock_genre_list = np.array(rock_genre_list)
 norm_rock_files = np.array(norm_rock_files)
@@ -76,11 +80,10 @@ norm_rock_feat = np.hstack((rock_genre_list.reshape(-1, 1), norm_rock_feat))
 norm_rock_feat = np.hstack((norm_rock_files.reshape(-1, 1), norm_rock_feat))
 norm_hiphop_feat = np.hstack((hiphop_genre_list.reshape(-1, 1), norm_hiphop_feat))
 norm_hiphop_feat = np.hstack((norm_hiphop_files.reshape(-1, 1), norm_hiphop_feat))
-#print(norm_rock_feat)
-#print(norm_hiphop_feat)
 
-with open(outfile, "w") as f:
+# Export to CSV File
+with open(outfile, "w", newline="") as f:
     csv_writer = csv.writer(f, delimiter=",")
-    csv_writer.writerow(header)
+    csv_writer.writerow(headers)
     csv_writer.writerows(norm_rock_feat)
     csv_writer.writerows(norm_hiphop_feat)
