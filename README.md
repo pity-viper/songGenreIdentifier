@@ -4,8 +4,8 @@ Our project is a decision tree machine learning model used to classify songs int
 ## Built With
 - librosa
 - scikit-learn
-## Authors
+## Credits
 - Parker Young
 - Lennon Horsley
 - Jakson Kimball
-## Credits
+## Acknowledgments
