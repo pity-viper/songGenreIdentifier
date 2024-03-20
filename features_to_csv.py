@@ -26,7 +26,16 @@ fn_list_ii = [
 ]
 
 
-def get_feature_vector(ts: np.ndarray, sr: int):
+def get_feature_vector(ts, sr):
+    """
+    Extract audio features from files, then compute their mean and standard deviation
+    Args:
+        ts (np.ndarray): A time series array of the audio file computed by Librosa
+        sr (int): The sample rate of the audio file in Hz
+
+    Returns:
+        list: A list of the means and standard deviations for each extracted feature
+    """
     # Call feature extraction functions on all the files
     feat_i = [func(y=ts, sr=sr) for func in fn_list_i]
     feat_ii = [func(y=ts) for func in fn_list_ii]
