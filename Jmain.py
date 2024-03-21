@@ -1,36 +1,57 @@
+import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
-import librosa
+from sklearn import metrics
+import seaborn as sns
+from sklearn import tree
+from IPython.display import Image
 
-# Load the example clip
-y, sr = librosa.load(librosa.ex('nutcracker'))
+# Figure out what to import the csv file
+df = pd.read_csv('song_features.csv', index_col='file_name')
 
-# Set the hop length; at 22050 Hz, 512 samples ~= 23ms
-hop_length = 512
+#features from the csv file that we need to train the ai on
+#all the other data is just white noise
+features = ['chroma_stft_mean', 'chroma_stft_dev', 'spectral_centroid_mean', 'spectral_centroid_dev',
+            'spectral_rolloff_mean', 'spectral_rolloff_dev', 'rms_mean', 'rms_dev', 'zero_crossing_rate_mean',
+            'zero_crossing_rate_dev']
 
-# Separate harmonics and percussives into two waveforms
-y_harmonic, y_percussive = librosa.effects.hpss(y)
+#the sex in the data set is a string and the ai cant run on a string, so you change it to a number here
+df['genre'] = df.genre.map({'rock': 0, 'hiphop': 1})
 
-# Beat track on the percussive signal
-tempo, beat_frames = librosa.beat.beat_track(y=y_percussive,
-                                             sr=sr)
+''''#the dataset has some values where age is empty this line gets rid of that
+df = df.loc[~df['Age'].isnull(), :]'''
 
-# Compute MFCC features from the raw signal
-mfcc = librosa.feature.mfcc(y=y, sr=sr, hop_length=hop_length, n_mfcc=13)
+#create x and y
+#x is a seperate file with just the train data
+#y is a seperate file with the cooresponding target values
+X = df.loc[:, features]
+y = df['genre']
 
-# And the first-order differences (delta features)
-mfcc_delta = librosa.feature.delta(mfcc)
+#split the dataset into testing and training data using train_test_split
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state = 0)
 
-# Stack and synchronize between beat events
-# This time, we'll use the mean value (default) instead of median
-beat_mfcc_delta = librosa.util.sync(np.vstack([mfcc, mfcc_delta]),
-                                    beat_frames)
+for i in range(len(y_train)):
+    print(y_train[i])
 
-# Compute chroma features from the harmonic signal
-chromagram = librosa.feature.chroma_cqt(y=y_harmonic, sr=sr)
+#create an instince of the model
+from sklearn.tree import DecisionTreeClassifier
+clf = DecisionTreeClassifier(max_depth = 10)
 
-# Aggregate chroma features between beat events
-# We'll use the median value of each feature between beat frames
-beat_chroma = librosa.util.sync(chromagram, beat_frames, aggregate=np.median)
+#train that biotch
+clf.fit(X_train, y_train)
 
-# Finally, stack all beat-synchronous features together
-beat_features = np.vstack([beat_chroma, beat_mfcc_delta])
+print(clf.score(X_test, y_test))
+
+'''plt.figure(figsize=(9,9), dpi = 300)
+tree.plot_tree(clf,
+               feature_names = features,
+               class_names=['rock', 'hiphop'],
+               filled = True);
+plt.show()'''
+
+
+'''import joblib
+joblib.dump(clf, 'titanic_model.pkl')
+clf_load = joblib.load('titanic_model.pkl')
+print(clf_load.score(X_test, y_test))'''
