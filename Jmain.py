@@ -7,7 +7,7 @@ from sklearn import tree
 from IPython.display import Image
 
 # Figure out what to import the csv file
-df = pd.read_csv('song_features.csv', index_col='file_name')
+df = pd.read_csv('song_features_more.csv', index_col= False) #, index_col='file_name'
 
 #features from the csv file that we need to train the ai on
 #all the other data is just white noise
@@ -31,8 +31,7 @@ y = df['genre']
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state = 0)
 
-for i in range(len(y_train)):
-    print(y_train[i])
+
 
 #create an instince of the model
 from sklearn.tree import DecisionTreeClassifier
