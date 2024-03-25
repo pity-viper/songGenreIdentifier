@@ -43,12 +43,12 @@ clf.fit(X_train, y_train)
 
 print(clf.score(X_test, y_test))
 
-'''plt.figure(figsize=(9,9), dpi = 300)
+plt.figure(figsize=(9,9), dpi = 300)
 tree.plot_tree(clf,
                feature_names = features,
                class_names=['rock', 'hiphop'],
                filled = True);
-plt.show()'''
+plt.show()
 
 
 '''import joblib
