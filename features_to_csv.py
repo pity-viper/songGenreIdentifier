@@ -40,6 +40,7 @@ def get_feature_vector(ts, sr):
         list: A list of the means and standard deviations for each extracted feature
     """
     # Call feature extraction functions on all the files
+    # To Do call the split_audio_file function here so I know the file name in this function, then put filename at beginning of feature vector so each audio segment also has the file name
     feat_i = [func(y=ts, sr=sr) for func in fn_list_i]
     feat_ii = [func(y=ts) for func in fn_list_ii]
     # Compute the mean and standard deviation for the features of all files
@@ -130,23 +131,23 @@ headers = [
 rock_genre_list = ["rock" for i in range(np.shape(np.array(norm_rock_feat))[0])]
 hiphop_genre_list = ["hiphop" for i in range(np.shape(np.array(norm_hiphop_feat))[0])]
 pop_genre_list = ["pop" for i in range(np.shape(np.array(norm_pop_feat))[0])]
+rock_genre_list = np.array(rock_genre_list)
+hiphop_genre_list = np.array(hiphop_genre_list)
+pop_genre_list = np.array(pop_genre_list)
+norm_rock_feat = np.hstack((rock_genre_list.reshape(-1, 1), norm_rock_feat))
+norm_hiphop_feat = np.hstack((hiphop_genre_list.reshape(-1, 1), norm_hiphop_feat))
+norm_pop_feat = np.hstack((pop_genre_list.reshape(-1, 1), norm_pop_feat))
 #rock_genre_list = ["rock" for i in range(len(norm_rock_files))]
 #hiphop_genre_list = ["hiphop" for i in range(len(norm_hiphop_files))]
 #pop_genre_list = ["pop" for i in range(len(norm_pop_files))]
 #genre_list = [*rock_genre_list, *hiphop_genre_list, *pop_genre_list]
 #norm_rock_files = list(map(os.path.basename, norm_rock_files))
-rock_genre_list = np.array(rock_genre_list)
 #norm_rock_files = np.array(norm_rock_files)
 #norm_hiphop_files = list(map(os.path.basename, norm_hiphop_files))
-hiphop_genre_list = np.array(hiphop_genre_list)
-pop_genre_list = np.array(pop_genre_list)
 #genre_list = np.array(genre_list)
 #norm_hiphop_files = np.array(norm_hiphop_files)
-norm_rock_feat = np.hstack((rock_genre_list.reshape(-1, 1), norm_rock_feat))
 #norm_rock_feat = np.hstack((norm_rock_files.reshape(-1, 1), norm_rock_feat))
-norm_hiphop_feat = np.hstack((hiphop_genre_list.reshape(-1, 1), norm_hiphop_feat))
 #norm_hiphop_feat = np.hstack((norm_hiphop_files.reshape(-1, 1), norm_hiphop_feat))
-norm_pop_feat = np.hstack((pop_genre_list.reshape(-1, 1), norm_pop_feat))
 #norm_feat = np.hstack((genre_list.reshape(-1, 1), song_feat))
 
 # Export to CSV File
