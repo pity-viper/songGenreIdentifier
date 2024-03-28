@@ -7,42 +7,6 @@ import csv
 import re
 
 
-def main():
-    norm_rock_files = load_files("./dataset/rock/", "wav")
-    norm_hiphop_files = load_files("./dataset/hiphop/", "wav")
-    norm_pop_files = load_files("./dataset/pop/", "wav")
-    audio_files = [*norm_rock_files, *norm_hiphop_files, *norm_pop_files]
-
-    # Feature extraction
-    song_feat = []
-    for file in audio_files:
-        feature_vector = get_feature_vectors(file)
-        song_feat.extend(feature_vector)
-
-    # Define CSV file needed info
-    outfile = "song_features_3genre_v2.csv"
-    headers = [
-        "file_name",
-        "genre",
-        "chroma_stft_mean",
-        "chroma_stft_dev",
-        "spectral_centroid_mean",
-        "spectral_centroid_dev",
-        "spectral_rolloff_mean",
-        "spectral_rolloff_dev",
-        "rms_mean",
-        "rms_dev",
-        "zero_crossing_rate_mean",
-        "zero_crossing_rate_dev"
-    ]
-
-    # Export to CSV File
-    with open(outfile, "w", newline="") as f:
-        csv_writer = csv.writer(f, delimiter=",")
-        csv_writer.writerow(headers)
-        csv_writer.writerows(song_feat)
-
-
 def load_files(path, extension):
     """
     Read all filenames in directory at path ending with extension
@@ -62,15 +26,18 @@ fn_list_i = [
     feature.spectral_centroid,
     feature.spectral_rolloff
 ]
+
 fn_list_ii = [
     feature.rms,
     feature.zero_crossing_rate
 ]
+
 file_extensions = [
     ".wav",
     ".mp3",
     ".flac"
 ]
+
 pattern = f"({'|'.join(file_extensions)})"
 
 
@@ -117,13 +84,21 @@ def get_genre(file_name):
 
     Returns:
         str: The genre of the given file_name
+
+    Raises:
+        ValueError: If file_name does not contain 'rock', 'hiphop', or 'pop'
     """
-    if "rock" in file_name:
-        return "rock"
-    elif "hiphop" in file_name:
-        return "hiphop"
-    elif "pop" in file_name:
-        return "pop"
+    match file_name:
+        case re.search("rock", file_name):
+            return "rock"
+        case re.search("hiphop", file_name):
+            return "hiphop"
+        case re.search("pop", file_name):
+            return "pop"
+        case _:
+            raise ValueError(
+                f"Expected a filename containing 'rock', 'hiphop', or 'pop', got '{file_name}'"
+            )
 
 
 def split_audio_file(audio_file, sec_len):
@@ -148,6 +123,42 @@ def split_audio_file(audio_file, sec_len):
     if audio_sections[-1].size < sample_rate:
         audio_sections.pop(-1)
     return audio_sections, sample_rate
+
+
+def main():
+    norm_rock_files = load_files("./dataset/rock/", "wav")
+    norm_hiphop_files = load_files("./dataset/hiphop/", "wav")
+    norm_pop_files = load_files("./dataset/pop/", "wav")
+    audio_files = [*norm_rock_files, *norm_hiphop_files, *norm_pop_files]
+
+    # Feature extraction
+    song_feat = []
+    for file in audio_files:
+        feature_vector = get_feature_vectors(file)
+        song_feat.extend(feature_vector)
+
+    # Define CSV file needed info
+    outfile = "song_features_3genre_v2.csv"
+    headers = [
+        "file_name",
+        "genre",
+        "chroma_stft_mean",
+        "chroma_stft_dev",
+        "spectral_centroid_mean",
+        "spectral_centroid_dev",
+        "spectral_rolloff_mean",
+        "spectral_rolloff_dev",
+        "rms_mean",
+        "rms_dev",
+        "zero_crossing_rate_mean",
+        "zero_crossing_rate_dev"
+    ]
+
+    # Export to CSV File
+    with open(outfile, "w", newline="") as f:
+        csv_writer = csv.writer(f, delimiter=",")
+        csv_writer.writerow(headers)
+        csv_writer.writerows(song_feat)
 
 
 main()
