@@ -4,17 +4,57 @@ import numpy as np
 import librosa
 from librosa import feature
 import csv
+import re
 
-# Load the normal audio files
-norm_rock_dir = "./dataset/rock/"
-norm_hiphop_dir = "./dataset/hiphop/"
-norm_pop_dir = "./dataset/pop/"
-norm_rock_files = glob(norm_rock_dir + "*.wav")
-norm_hiphop_files = glob(norm_hiphop_dir + "*.wav")
-norm_pop_files = glob(norm_pop_dir + "*.wav")
-#audio_files = [*norm_rock_files, *norm_rock_files, *norm_pop_files]
-#rock_genre_list = ["rock" for i in range(len(norm_rock_files))]
-#hiphop_genre_list = ["hiphop" for i in range(len(norm_rock_files))]
+
+def main():
+    norm_rock_files = load_files("./dataset/rock/", "wav")
+    norm_hiphop_files = load_files("./dataset/hiphop/", "wav")
+    norm_pop_files = load_files("./dataset/pop/", "wav")
+    audio_files = [*norm_rock_files, *norm_hiphop_files, *norm_pop_files]
+
+    # Feature extraction
+    song_feat = []
+    for file in audio_files:
+        feature_vector = get_feature_vectors(file)
+        song_feat.extend(feature_vector)
+
+    # Define CSV file needed info
+    outfile = "song_features_3genre_v2.csv"
+    headers = [
+        "file_name",
+        "genre",
+        "chroma_stft_mean",
+        "chroma_stft_dev",
+        "spectral_centroid_mean",
+        "spectral_centroid_dev",
+        "spectral_rolloff_mean",
+        "spectral_rolloff_dev",
+        "rms_mean",
+        "rms_dev",
+        "zero_crossing_rate_mean",
+        "zero_crossing_rate_dev"
+    ]
+
+    # Export to CSV File
+    with open(outfile, "w", newline="") as f:
+        csv_writer = csv.writer(f, delimiter=",")
+        csv_writer.writerow(headers)
+        csv_writer.writerows(song_feat)
+
+
+def load_files(path, extension):
+    """
+    Read all filenames in directory at path ending with extension
+    Args:
+        path (str): Path of directory containing the files. Absolute path or relative. Ex: ("./path/to/your/directory/")
+        extension (str): The file extension to load. Do NOT include a dot. Ex: ("wav")
+
+    Returns:
+        list: A list of the paths to all the files in the given directory
+    """
+    return sorted(glob(f"{path}*.{extension}"))
+
 
 # Define the functions to extract the features
 fn_list_i = [
@@ -22,35 +62,68 @@ fn_list_i = [
     feature.spectral_centroid,
     feature.spectral_rolloff
 ]
-
 fn_list_ii = [
     feature.rms,
     feature.zero_crossing_rate
 ]
+file_extensions = [
+    ".wav",
+    ".mp3",
+    ".flac"
+]
+pattern = f"({'|'.join(file_extensions)})"
 
 
-def get_feature_vector(ts, sr):
+def get_feature_vectors(audio_file, audio_genre=None):
     """
     Extract audio features from files, then compute their mean and standard deviation
     Args:
-        ts (np.ndarray): A time series array of the audio file computed by Librosa
-        sr (int): The sample rate of the audio file in Hz
+        audio_file (str): The path to the audio file
+        audio_genre (str): Optional parameter for the genre of audio_file
 
     Returns:
-        list: A list of the means and standard deviations for each extracted feature
+        list: The filename, genre, and the means and standard deviations for each extracted feature
     """
-    # Call feature extraction functions on all the files
-    # To Do call the split_audio_file function here so I know the file name in this function, then put filename at beginning of feature vector so each audio segment also has the file name
-    feat_i = [func(y=ts, sr=sr) for func in fn_list_i]
-    feat_ii = [func(y=ts) for func in fn_list_ii]
-    # Compute the mean and standard deviation for the features of all files
-    feat_vector_i = [(np.mean(x), np.std(x)) for x in feat_i]
-    feat_vector_ii = [(np.mean(x), np.std(x)) for x in feat_ii]
-    feat_vector_i = [item for tup in feat_vector_i for item in tup]
-    feat_vector_ii = [item for t in feat_vector_ii for item in t]
-    # Combine and return the two different feature sets
-    feature_vector = feat_vector_i + feat_vector_ii
-    return feature_vector
+    feature_vectors = []
+    file_name = os.path.basename(audio_file)
+    if audio_genre:
+        genre = audio_genre
+    else:
+        genre = get_genre(file_name)
+    # Split the audio file in segments
+    sections, sr = split_audio_file(audio_file, 3)
+    # Call feature extraction functions for each segment
+    for i in range(len(sections)):
+        identifiers = [re.sub(pattern, f".clip{i}\\1", file_name), genre]
+        feat_i = [func(y=sections[i], sr=sr) for func in fn_list_i]
+        feat_ii = [func(y=sections[i]) for func in fn_list_ii]
+        # Compute the mean and standard deviation for the features of all files
+        feat_vector_i = [(np.mean(x), np.std(x)) for x in feat_i]
+        feat_vector_ii = [(np.mean(x), np.std(x)) for x in feat_ii]
+        feat_vector_i = [item for tup in feat_vector_i for item in tup]
+        feat_vector_ii = [item for t in feat_vector_ii for item in t]
+        # Combine and return the two different feature sets
+        feat_vector = feat_vector_i + feat_vector_ii
+        feat_vector = identifiers + feat_vector
+        feature_vectors.append(feat_vector)
+    return feature_vectors
+
+
+def get_genre(file_name):
+    """
+    Get the genre of the given file name
+    Args:
+        file_name (str): The basename of the file
+
+    Returns:
+        str: The genre of the given file_name
+    """
+    if "rock" in file_name:
+        return "rock"
+    elif "hiphop" in file_name:
+        return "hiphop"
+    elif "pop" in file_name:
+        return "pop"
 
 
 def split_audio_file(audio_file, sec_len):
@@ -61,7 +134,7 @@ def split_audio_file(audio_file, sec_len):
         sec_len (int): number of seconds long the audio segment should be
 
     Returns:
-        A list of the audio sections and the sample rate of the audio in tuple format (audio_sections, sample_rate)
+        tuple: Segments of audio_file and the sample rate of audio_file in tuple format (audio_sections, sample_rate)
     """
     time_series, sample_rate = librosa.load(audio_file)
     sec_samples = sec_len * sample_rate
@@ -77,84 +150,4 @@ def split_audio_file(audio_file, sec_len):
     return audio_sections, sample_rate
 
 
-# Feature extraction
-norm_rock_feat = []
-norm_hiphop_feat = []
-norm_pop_feat = []
-#song_feat = []
-
-for file in norm_rock_files:
-    #ts, sr = librosa.load(file)
-    #feature_vector = get_feature_vector(ts, sr)
-    #norm_rock_feat.append(feature_vector)
-    audio_sections, sr = split_audio_file(file, 3)
-    for ts in audio_sections:
-        feature_vector = get_feature_vector(ts, sr)
-        norm_rock_feat.append(feature_vector)
-for file in norm_hiphop_files:
-    #ts, sr = librosa.load(file)
-    #feature_vector = get_feature_vector(ts, sr)
-    #norm_hiphop_feat.append(feature_vector)
-    audio_sections, sr = split_audio_file(file, 3)
-    for ts in audio_sections:
-        feature_vector = get_feature_vector(ts, sr)
-        norm_hiphop_feat.append(feature_vector)
-for file in norm_pop_files:
-    audio_sections, sr = split_audio_file(file, 3)
-    for ts in audio_sections:
-        feature_vector = get_feature_vector(ts, sr)
-        norm_pop_feat.append(feature_vector)
-"""
-for file in audio_files:
-    audio_sections, sr = split_audio_file(file, 3)
-    for ts in audio_sections:
-        feature_vector = get_feature_vector(ts, sr)
-        song_feat.append(feature_vector)
-"""
-# Define CSV file needed info
-outfile = "song_features_more_3genre.csv"
-headers = [
-    "genre",
-    "chroma_stft_mean",
-    "chroma_stft_dev",
-    "spectral_centroid_mean",
-    "spectral_centroid_dev",
-    "spectral_rolloff_mean",
-    "spectral_rolloff_dev",
-    "rms_mean",
-    "rms_dev",
-    "zero_crossing_rate_mean",
-    "zero_crossing_rate_dev"
-]
-
-# Format arrays in way that CSV library likes
-rock_genre_list = ["rock" for i in range(np.shape(np.array(norm_rock_feat))[0])]
-hiphop_genre_list = ["hiphop" for i in range(np.shape(np.array(norm_hiphop_feat))[0])]
-pop_genre_list = ["pop" for i in range(np.shape(np.array(norm_pop_feat))[0])]
-rock_genre_list = np.array(rock_genre_list)
-hiphop_genre_list = np.array(hiphop_genre_list)
-pop_genre_list = np.array(pop_genre_list)
-norm_rock_feat = np.hstack((rock_genre_list.reshape(-1, 1), norm_rock_feat))
-norm_hiphop_feat = np.hstack((hiphop_genre_list.reshape(-1, 1), norm_hiphop_feat))
-norm_pop_feat = np.hstack((pop_genre_list.reshape(-1, 1), norm_pop_feat))
-#rock_genre_list = ["rock" for i in range(len(norm_rock_files))]
-#hiphop_genre_list = ["hiphop" for i in range(len(norm_hiphop_files))]
-#pop_genre_list = ["pop" for i in range(len(norm_pop_files))]
-#genre_list = [*rock_genre_list, *hiphop_genre_list, *pop_genre_list]
-#norm_rock_files = list(map(os.path.basename, norm_rock_files))
-#norm_rock_files = np.array(norm_rock_files)
-#norm_hiphop_files = list(map(os.path.basename, norm_hiphop_files))
-#genre_list = np.array(genre_list)
-#norm_hiphop_files = np.array(norm_hiphop_files)
-#norm_rock_feat = np.hstack((norm_rock_files.reshape(-1, 1), norm_rock_feat))
-#norm_hiphop_feat = np.hstack((norm_hiphop_files.reshape(-1, 1), norm_hiphop_feat))
-#norm_feat = np.hstack((genre_list.reshape(-1, 1), song_feat))
-
-# Export to CSV File
-with open(outfile, "w", newline="") as f:
-    csv_writer = csv.writer(f, delimiter=",")
-    csv_writer.writerow(headers)
-    csv_writer.writerows(norm_rock_feat)
-    csv_writer.writerows(norm_hiphop_feat)
-    csv_writer.writerows(norm_pop_feat)
-    #csv_writer.writerows(song_feat)
+main()
