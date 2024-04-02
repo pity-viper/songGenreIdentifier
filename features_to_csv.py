@@ -68,7 +68,7 @@ def get_feature_vectors(audio_file, audio_genre=None):
         feat_vector_i = [(np.mean(x), np.std(x)) for x in feat_i]
         feat_vector_ii = [(np.mean(x), np.std(x)) for x in feat_ii]
         feat_vector_i = [item for tup in feat_vector_i for item in tup]
-        feat_vector_ii = [item for t in feat_vector_ii for item in t]
+        feat_vector_ii = [item for tup in feat_vector_ii for item in tup]
         # Combine and return the two different feature sets
         feat_vector = feat_vector_i + feat_vector_ii
         feat_vector = identifiers + feat_vector
