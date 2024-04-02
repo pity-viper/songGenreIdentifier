@@ -24,7 +24,8 @@ def load_files(path, extension):
 fn_list_i = [
     feature.chroma_stft,
     feature.spectral_centroid,
-    feature.spectral_rolloff
+    feature.spectral_rolloff,
+    feature.mfcc
 ]
 
 fn_list_ii = [
@@ -88,19 +89,6 @@ def get_genre(file_name):
     Raises:
         ValueError: If file_name does not contain 'rock', 'hiphop', or 'pop'
     """
-    """
-    match file_name:
-        case re.search("rock", file_name):
-            return "rock"
-        case re.search("hiphop", file_name):
-            return "hiphop"
-        case re.search("pop", file_name):
-            return "pop"
-        case _:
-            raise ValueError(
-                f"Expected a filename containing 'rock', 'hiphop', or 'pop', got '{file_name}'"
-            )
-            """
     if "rock" in file_name:
         return "rock"
     elif "hiphop" in file_name:
@@ -140,9 +128,9 @@ def split_audio_file(audio_file, sec_len):
 def main():
     norm_rock_files = load_files("./dataset/rock/", "wav")
     norm_hiphop_files = load_files("./dataset/hiphop/", "wav")
-    #norm_pop_files = load_files("./dataset/pop/", "wav")
-    #audio_files = [*norm_rock_files, *norm_hiphop_files, *norm_pop_files]
-    audio_files = [*norm_rock_files, *norm_hiphop_files]
+    norm_pop_files = load_files("./dataset/pop/", "wav")
+    audio_files = [*norm_rock_files, *norm_hiphop_files, *norm_pop_files]
+    #audio_files = [*norm_rock_files, *norm_hiphop_files]
 
     # Feature extraction
     song_feat = []
@@ -151,7 +139,7 @@ def main():
         song_feat.extend(feature_vector)
 
     # Define CSV file needed info
-    outfile = "song_features_v3.csv"
+    outfile = "song_features_3genre_v4.csv"
     headers = [
         "file_name",
         "genre",
@@ -161,6 +149,8 @@ def main():
         "spectral_centroid_dev",
         "spectral_rolloff_mean",
         "spectral_rolloff_dev",
+        "mfcc_mean",
+        "mfcc_var",
         "rms_mean",
         "rms_dev",
         "zero_crossing_rate_mean",
