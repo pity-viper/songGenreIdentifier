@@ -58,7 +58,7 @@ def get_feature_vectors(audio_file, audio_genre=None):
     else:
         genre = get_genre(file_name)
     # Split the audio file in segments
-    sections, sr = split_audio_file(audio_file, 3)
+    sections, sr = split_audio_file(audio_file, 1)
     # Call feature extraction functions for each segment
     for i in range(len(sections)):
         identifiers = [re.sub(pattern, f".clip{i}\\1", file_name), genre]
@@ -88,6 +88,7 @@ def get_genre(file_name):
     Raises:
         ValueError: If file_name does not contain 'rock', 'hiphop', or 'pop'
     """
+    """
     match file_name:
         case re.search("rock", file_name):
             return "rock"
@@ -99,6 +100,17 @@ def get_genre(file_name):
             raise ValueError(
                 f"Expected a filename containing 'rock', 'hiphop', or 'pop', got '{file_name}'"
             )
+            """
+    if "rock" in file_name:
+        return "rock"
+    elif "hiphop" in file_name:
+        return "hiphop"
+    elif "pop" in file_name:
+        return "pop"
+    else:
+        raise ValueError(
+            f"Expected a filename containing 'rock', 'hiphop', or 'pop', got '{file_name}'"
+        )
 
 
 def split_audio_file(audio_file, sec_len):
@@ -106,7 +118,7 @@ def split_audio_file(audio_file, sec_len):
     Splits an audio file into segments of specified length
     Args:
         audio_file (str): String pathname of .wav audio file
-        sec_len (int): number of seconds long the audio segment should be
+        sec_len (float): number of seconds long the audio segment should be
 
     Returns:
         tuple: Segments of audio_file and the sample rate of audio_file in tuple format (audio_sections, sample_rate)
@@ -128,8 +140,9 @@ def split_audio_file(audio_file, sec_len):
 def main():
     norm_rock_files = load_files("./dataset/rock/", "wav")
     norm_hiphop_files = load_files("./dataset/hiphop/", "wav")
-    norm_pop_files = load_files("./dataset/pop/", "wav")
-    audio_files = [*norm_rock_files, *norm_hiphop_files, *norm_pop_files]
+    #norm_pop_files = load_files("./dataset/pop/", "wav")
+    #audio_files = [*norm_rock_files, *norm_hiphop_files, *norm_pop_files]
+    audio_files = [*norm_rock_files, *norm_hiphop_files]
 
     # Feature extraction
     song_feat = []
@@ -138,7 +151,7 @@ def main():
         song_feat.extend(feature_vector)
 
     # Define CSV file needed info
-    outfile = "song_features_3genre_v2.csv"
+    outfile = "song_features_v3.csv"
     headers = [
         "file_name",
         "genre",

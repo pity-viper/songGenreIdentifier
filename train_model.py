@@ -10,7 +10,7 @@ from sklearn.tree import DecisionTreeClassifier
 import joblib
 
 # Figure out what to import the csv file
-df = pd.read_csv('song_features_more.csv', index_col=False) #, index_col='file_name'
+df = pd.read_csv('song_features_v3.csv', index_col=False) #, index_col='file_name'
 
 #features from the csv file that we need to train the ai on
 #all the other data is just white noise
@@ -19,7 +19,7 @@ features = ['chroma_stft_mean', 'chroma_stft_dev', 'spectral_centroid_mean', 'sp
             'zero_crossing_rate_dev']
 
 #the genre in the dataset is a string and the ai cant run on a string, so you change it to a number here
-df['genre'] = df.genre.map({'rock': 0, 'hiphop': 1})
+df['genre'] = df.genre.map({'rock': 0, 'hiphop': 1, 'pop': 2})
 
 
 #create x and y
@@ -34,7 +34,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, random_state = 0)
 
 
 #create an instance of the model
-clf = DecisionTreeClassifier(max_depth = 10)
+clf = DecisionTreeClassifier(max_depth = 50)
 
 #train that biotch
 clf.fit(X_train, y_train)
@@ -44,10 +44,10 @@ print(clf.score(X_test, y_test))
 plt.figure(figsize=(9, 9), dpi=300)
 tree.plot_tree(clf,
                feature_names=features,
-               class_names=['rock', 'hiphop'],
+               class_names=['rock', 'hiphop', 'pop'],
                filled=True)
-plt.show()
-
+#plt.show()
+print(clf.get_depth())
 
 '''
 joblib.dump(clf, 'genre_identifier_model.pkl')
