@@ -167,4 +167,5 @@ def main():
         csv_writer.writerows(song_feat)
 
 
-main()
+if __name__ == "__main__":
+    main()
