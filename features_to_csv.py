@@ -99,7 +99,7 @@ def get_genre(file_name):
         return "country"
     else:
         raise ValueError(
-            f"Expected a filename containing 'rock', 'hiphop', or 'pop', got '{file_name}'"
+            f"Expected a filename containing 'rock', 'hiphop', 'pop', or 'country'. Instead got '{file_name}'"
         )
 
 
