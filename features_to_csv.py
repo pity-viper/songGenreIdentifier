@@ -95,9 +95,11 @@ def get_genre(file_name):
         return "hiphop"
     elif "pop" in file_name:
         return "pop"
+    elif "country" in file_name:
+        return "country"
     else:
         raise ValueError(
-            f"Expected a filename containing 'rock', 'hiphop', or 'pop', got '{file_name}'"
+            f"Expected a filename containing 'rock', 'hiphop', 'pop', or 'country'. Instead got '{file_name}'"
         )
 
 
@@ -129,7 +131,8 @@ def main():
     norm_rock_files = load_files("./dataset/rock/", "wav")
     norm_hiphop_files = load_files("./dataset/hiphop/", "wav")
     norm_pop_files = load_files("./dataset/pop/", "wav")
-    audio_files = [*norm_rock_files, *norm_hiphop_files, *norm_pop_files]
+    norm_country_files = load_files("./dataset/country/", "wav")
+    audio_files = [*norm_rock_files, *norm_hiphop_files, *norm_pop_files, *norm_country_files]
     #audio_files = [*norm_rock_files, *norm_hiphop_files]
 
     # Feature extraction
@@ -139,7 +142,7 @@ def main():
         song_feat.extend(feature_vector)
 
     # Define CSV file needed info
-    outfile = "song_features_3genre_v4.csv"
+    outfile = "song_features_4genre.csv"
     headers = [
         "file_name",
         "genre",
@@ -164,4 +167,5 @@ def main():
         csv_writer.writerows(song_feat)
 
 
-main()
+if __name__ == "__main__":
+    main()
