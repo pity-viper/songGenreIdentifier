@@ -1,4 +1,4 @@
-file_name,genre,chroma_stft_mean,chroma_stft_dev,spectral_centroid_mean,spectral_centroid_dev,spectral_rolloff_mean,spectral_rolloff_dev,mfcc_mean,mfcc_var,rms_mean,rms_dev,zero_crossing_rate_mean,zero_crossing_rate_dev
+file_name,genre,chroma_stft_mean,chroma_stft_dev,spectral_centroid_mean,spectral_centroid_dev,spectral_rolloff_mean,spectral_rolloff_dev,mfcc_mean,mfcc_dev,rms_mean,rms_dev,zero_crossing_rate_mean,zero_crossing_rate_dev
 rock.00000.clip0.wav,rock,0.34832886,0.2938067,1719.4588630696294,388.4888252826167,3402.490789240057,931.2459371943731,1.335469,43.000534,0.14543253,0.04357614,0.06727183948863637,0.018686761167135173
 rock.00000.clip1.wav,rock,0.5268005,0.27043793,2354.3159532545787,680.3641545337033,5013.321200284091,1496.848214879529,3.4608579,33.642944,0.19757356,0.06954065,0.11274857954545454,0.05042153507198553
 rock.00000.clip2.wav,rock,0.41328004,0.27130154,2426.0188622043956,226.87123433029092,5337.298029119318,528.6777299604104,4.564119,29.532907,0.19465953,0.020770438,0.1142578125,0.02859905195659554
