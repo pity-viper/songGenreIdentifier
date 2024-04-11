@@ -10,7 +10,7 @@ from sklearn.tree import DecisionTreeClassifier
 import joblib
 
 # Figure out what to import the csv file
-df = pd.read_csv('song_features_3genre_v4.5.csv', index_col='file_name')
+df = pd.read_csv('song_features_4genre.csv', index_col='file_name')
 
 #features from the csv file that we need to train the ai on
 #all the other data is just white noise
