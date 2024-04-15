@@ -90,7 +90,24 @@ for path in hiphop_test_files:
     prediction_mode = pd.DataFrame(prediction).mode()
     results[f"(hiphop) {os.path.basename(path)}"] = (genres[prediction_mode.iloc[0][0]], counts)
 
-[print(f"{k} : {v}") for k, v in results.items()]
+scores = {
+    "rock": 0,
+    "hiphop": 0,
+}
+"""
+for k, v in results.items():
+    print(type(v))
+    print(v[0])
+"""
+for k, v in results.items():
+    print(f"{k} : {v}")
+    if "rock" in k and "rock" in v[0]:
+        scores["rock"] = scores["rock"] + 1
+    elif "hiphop" in k and "hiphop" in v[0]:
+        scores["hiphop"] = scores["rock"] + 1
+
+print(f"rock: {scores['rock']}/10\nhiphop: {scores['hiphop']}/10")
+
 # print(clf.score(X_test, y_test))
 
 '''plt.figure(figsize=(9, 9), dpi=300)
