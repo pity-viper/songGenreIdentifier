@@ -36,6 +36,7 @@ def predict_song_genre(file_path, genre="predict"):
 
 """
 for path in rock_test_files:
+    print(os.path.basename(path))
     test_data = []
     test_data.extend(get_feature_vectors(path, audio_genre='rock'))
     test = pd.DataFrame.from_records(test_data, columns=headers)
@@ -47,6 +48,7 @@ for path in rock_test_files:
     results[f"(rock) {os.path.basename(path)}"] = (num_to_genre[prediction_mode.iloc[0][0]], counts)
 
 for path in hiphop_test_files:
+    print(os.path.basename(path))
     test_data = []
     test_data.extend(get_feature_vectors(path, audio_genre='hiphop'))
     test = pd.DataFrame.from_records(test_data, columns=headers)
@@ -59,7 +61,7 @@ for path in hiphop_test_files:
 """
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     # Figure out what to import the csv file
     df = pd.read_csv('song_features_4genre.csv', index_col='file_name')
 
@@ -150,6 +152,7 @@ if __name__ == "main":
                    filled=True)
     #plt.show()'''
     print(clf.get_depth())
+    print(clf.feature_importances_)
     '''
     joblib.dump(clf, 'genre_identifier_model.pkl')
     clf_load = joblib.load('genre_identifier_model.pkl')
