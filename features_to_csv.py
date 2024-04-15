@@ -47,7 +47,7 @@ def get_feature_vectors(audio_file, audio_genre=None):
     Extract audio features from files, then compute their mean and standard deviation
     Args:
         audio_file (str): The path to the audio file
-        audio_genre (str): Optional parameter for the genre of audio_file
+        audio_genre (str): Optional parameter for the genre of audio_file. If unknown, pass 'predict'
 
     Returns:
         list: The filename, genre, and the means and standard deviations for each extracted feature
