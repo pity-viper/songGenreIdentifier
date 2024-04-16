@@ -5,19 +5,21 @@ import librosa
 from librosa import feature
 import csv
 import re
+import itertools
+from pathlib import Path
 
 
-def load_files(path, extension):
+def load_files(path):
     """
     Read all filenames in directory at path ending with extension
     Args:
         path (str): Path of directory containing the files. Absolute path or relative. Ex: ("./path/to/your/directory/")
-        extension (str): The file extension to load. Do NOT include a dot. Ex: ("wav")
 
     Returns:
         list: A list of the paths to all the files in the given directory
     """
-    return sorted(glob(f"{path}*.{extension}"))
+    #return sorted(glob(f"{path}*.{extension}"))
+    return list(filter(lambda x: x.suffix in file_extensions, Path(path).glob("*")))
 
 
 # Define the functions to extract the features
@@ -68,11 +70,12 @@ def get_feature_vectors(audio_file, audio_genre=None):
         # Compute the mean and standard deviation for the features of all files
         feat_vector_i = [(np.mean(x), np.std(x)) for x in feat_i]
         feat_vector_ii = [(np.mean(x), np.std(x)) for x in feat_ii]
-        feat_vector_i = [item for tup in feat_vector_i for item in tup]
-        feat_vector_ii = [item for tup in feat_vector_ii for item in tup]
+        #feat_vector_i = [item for tup in feat_vector_i for item in tup]
+        #feat_vector_ii = [item for tup in feat_vector_ii for item in tup]
+        #feat_vector = feat_vector_i + feat_vector_ii
+        #feat_vector = identifiers + feat_vector
         # Combine and return the two different feature sets
-        feat_vector = feat_vector_i + feat_vector_ii
-        feat_vector = identifiers + feat_vector
+        feat_vector = list(itertools.chain(identifiers, *feat_vector_i, *feat_vector_ii))
         feature_vectors.append(feat_vector)
     return feature_vectors
 
@@ -142,8 +145,8 @@ def main():
         feature_vector = get_feature_vectors(file)
         song_feat.extend(feature_vector)"""
 
-    rock_files = load_files("./dataset/rock/actual_rock/", "mp3")
-    hiphop_files = load_files("./dataset/hiphop/actual_hiphop/", "mp3")
+    rock_files = load_files("./dataset/rock/")
+    hiphop_files = load_files("./dataset/hiphop/actual_hiphop/")
 
     song_feat = []
     for file in rock_files:
