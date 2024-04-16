@@ -63,7 +63,7 @@ for path in hiphop_test_files:
 
 if __name__ == "__main__":
     # Figure out what to import the csv file
-    df = pd.read_csv('song_features_4genre.csv', index_col='file_name')
+    df = pd.read_csv('song_features_4genre_v2.csv', index_col='file_name')
 
     # features from the csv file that we need to train the ai on
     # all the other data is just white noise
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     ]
 
     # create an instance of the model
-    clf = DecisionTreeClassifier(max_depth=50)
+    clf = DecisionTreeClassifier(max_depth=50, class_weight="balanced")
 
     # train that biotch
     clf.fit(X, y)  # _train, y_train)
@@ -139,20 +139,21 @@ if __name__ == "__main__":
         if "rock" in k and "rock" in v[0]:
             scores["rock"] = scores["rock"] + 1
         elif "hiphop" in k and "hiphop" in v[0]:
-            scores["hiphop"] = scores["rock"] + 1
+            scores["hiphop"] = scores["hiphop"] + 1
 
     print(f"rock: {scores['rock']}/10\nhiphop: {scores['hiphop']}/10")
 
     # print(clf.score(X_test, y_test))
 
-    '''plt.figure(figsize=(9, 9), dpi=300)
+    plt.figure(figsize=(9, 9), dpi=300)
     tree.plot_tree(clf,
                    feature_names=features,
-                   class_names=['rock', 'hiphop', 'pop'],
+                   class_names=['rock', 'hiphop', 'pop', 'country'],
                    filled=True)
-    #plt.show()'''
+    plt.show()
     print(clf.get_depth())
     print(clf.feature_importances_)
+    print(sum(clf.feature_importances_))
     '''
     joblib.dump(clf, 'genre_identifier_model.pkl')
     clf_load = joblib.load('genre_identifier_model.pkl')

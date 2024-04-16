@@ -128,6 +128,7 @@ def split_audio_file(audio_file, sec_len):
 
 
 def main():
+    """
     norm_rock_files = load_files("./dataset/rock/", "wav")
     norm_hiphop_files = load_files("./dataset/hiphop/", "wav")
     norm_pop_files = load_files("./dataset/pop/", "wav")
@@ -139,10 +140,22 @@ def main():
     song_feat = []
     for file in audio_files:
         feature_vector = get_feature_vectors(file)
+        song_feat.extend(feature_vector)"""
+
+    rock_files = load_files("./dataset/rock/actual_rock/", "mp3")
+    hiphop_files = load_files("./dataset/hiphop/actual_hiphop/", "mp3")
+
+    song_feat = []
+    for file in rock_files:
+        feature_vector = get_feature_vectors(file, audio_genre="rock")
+        song_feat.extend(feature_vector)
+
+    for file in hiphop_files:
+        feature_vector = get_feature_vectors(file, audio_genre="hiphop")
         song_feat.extend(feature_vector)
 
     # Define CSV file needed info
-    outfile = "song_features_4genre.csv"
+    outfile = "song_features_2genre_better.csv"
     headers = [
         "file_name",
         "genre",
@@ -153,7 +166,7 @@ def main():
         "spectral_rolloff_mean",
         "spectral_rolloff_dev",
         "mfcc_mean",
-        "mfcc_var",
+        "mfcc_dev",
         "rms_mean",
         "rms_dev",
         "zero_crossing_rate_mean",
