@@ -33,34 +33,6 @@ def predict_song_genre(file_path, genre="predict"):
     return f"({genre}) {os.path.basename(path)}", (num_to_genre[prediction_mode.iloc[0][0]], counts)
 
 
-
-"""
-for path in rock_test_files:
-    print(os.path.basename(path))
-    test_data = []
-    test_data.extend(get_feature_vectors(path, audio_genre='rock'))
-    test = pd.DataFrame.from_records(test_data, columns=headers)
-    X_test = test.loc[:, features]
-
-    prediction = clf.predict(X_test)
-    counts = pd.DataFrame(prediction).value_counts()
-    prediction_mode = pd.DataFrame(prediction).mode()
-    results[f"(rock) {os.path.basename(path)}"] = (num_to_genre[prediction_mode.iloc[0][0]], counts)
-
-for path in hiphop_test_files:
-    print(os.path.basename(path))
-    test_data = []
-    test_data.extend(get_feature_vectors(path, audio_genre='hiphop'))
-    test = pd.DataFrame.from_records(test_data, columns=headers)
-    X_test = test.loc[:, features]
-
-    prediction = clf.predict(X_test)
-    counts = pd.DataFrame(prediction).value_counts()
-    prediction_mode = pd.DataFrame(prediction).mode()
-    results[f"(hiphop) {os.path.basename(path)}"] = (num_to_genre[prediction_mode.iloc[0][0]], counts)
-"""
-
-
 if __name__ == "__main__":
     # Figure out what to import the csv file
     df = pd.read_csv('song_features_4genre_v2.csv', index_col='file_name')
