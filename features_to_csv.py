@@ -1,5 +1,5 @@
 import os.path
-from glob import glob
+#from glob import glob
 import numpy as np
 import librosa
 from librosa import feature
@@ -19,7 +19,7 @@ def load_files(path):
         list: A list of the paths to all the files in the given directory
     """
     #return sorted(glob(f"{path}*.{extension}"))
-    return list(filter(lambda x: x.suffix in file_extensions, Path(path).glob("*")))
+    return list(filter(lambda x: x.suffix in file_extensions, Path(path).glob("**/*")))
 
 
 # Define the functions to extract the features
@@ -130,7 +130,7 @@ def split_audio_file(audio_file, sec_len):
     return audio_sections, sample_rate
 
 
-def main():
+if __name__ == "__main__":
     """
     norm_rock_files = load_files("./dataset/rock/", "wav")
     norm_hiphop_files = load_files("./dataset/hiphop/", "wav")
@@ -146,7 +146,9 @@ def main():
         song_feat.extend(feature_vector)"""
 
     rock_files = load_files("./dataset/rock/")
-    hiphop_files = load_files("./dataset/hiphop/actual_hiphop/")
+    hiphop_files = load_files("./dataset/hiphop/")
+    country_files = load_files("./dataset/country/")
+    pop_files = load_files("./dataset/pop/")
 
     song_feat = []
     for file in rock_files:
@@ -157,8 +159,16 @@ def main():
         feature_vector = get_feature_vectors(file, audio_genre="hiphop")
         song_feat.extend(feature_vector)
 
+    for file in country_files:
+        feature_vector = get_feature_vectors(file, audio_genre="country")
+        song_feat.extend(feature_vector)
+
+    for file in pop_files:
+        feature_vector = get_feature_vectors(file, audio_genre="pop")
+        song_feat.extend(feature_vector)
+
     # Define CSV file needed info
-    outfile = "song_features_2genre_better.csv"
+    outfile = "song_features_4genre_v3.csv"
     headers = [
         "file_name",
         "genre",
@@ -181,7 +191,3 @@ def main():
         csv_writer = csv.writer(f, delimiter=",")
         csv_writer.writerow(headers)
         csv_writer.writerows(song_feat)
-
-
-if __name__ == "__main__":
-    main()

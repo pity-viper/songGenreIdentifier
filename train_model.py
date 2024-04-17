@@ -107,8 +107,10 @@ if __name__ == "__main__":
     clf.fit(X, y)  # _train, y_train)
 
     # load our testing songs
-    rock_test_files = load_files("./test_songs/rock/", "mp3")
-    hiphop_test_files = load_files("./test_songs/hiphop/", "mp3")
+    rock_test_files = load_files("./test_songs/rock/")
+    hiphop_test_files = load_files("./test_songs/hiphop/")
+    pop_test_files = load_files("./test_songs/pop/")
+    country_test_files = load_files("./test_songs/country/")
 
     num_to_genre = {
         0: 'rock',
@@ -126,6 +128,14 @@ if __name__ == "__main__":
         k, v = predict_song_genre(path, "hiphop")
         results[k] = v
 
+    for path in pop_test_files:
+        k, v = predict_song_genre(path, "pop")
+        results[k] = v
+
+    for path in country_test_files:
+        k, v = predict_song_genre(path, "country")
+        results[k] = v
+
     scores = {
         "rock": 0,
         "hiphop": 0,
@@ -140,8 +150,13 @@ if __name__ == "__main__":
             scores["rock"] = scores["rock"] + 1
         elif "hiphop" in k and "hiphop" in v[0]:
             scores["hiphop"] = scores["hiphop"] + 1
+        elif "pop" in k and "pop" in v[0]:
+            scores["pop"] = scores["pop"] + 1
+        elif "country" in k and "country" in v[0]:
+            scores["country"] = scores["country"] + 1
 
-    print(f"rock: {scores['rock']}/10\nhiphop: {scores['hiphop']}/10")
+    print(f"rock: {scores['rock']}/{len(rock_test_files)}\nhiphop: {scores['hiphop']}/{len(hiphop_test_files)}"
+          f"\npop: {scores['pop']}/{len(pop_test_files)}\ncountry: {scores['country']}/{len(country_test_files)}")
 
     # print(clf.score(X_test, y_test))
 
