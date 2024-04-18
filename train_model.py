@@ -72,36 +72,33 @@ def predict_song_genre(song_file_path, model_file_path, genre="predict", testing
 
 
 if __name__ == "__main__":
-    # Figure out what to import the csv file
+    # Import the csv file
     df = pd.read_csv('song_features_4genre_v2.csv', index_col='file_name')
 
-    # the genre in the dataset is a string and the ai cant run on a string, so you change it to a number here
+    # Map genres to numerical values
     df['genre'] = df.genre.map({'rock': 0, 'hiphop': 1, 'pop': 2, 'country': 3})
 
-    # create x and y
-    # x is a separate file with just the train data
-    # y is a separate file with the corresponding target values
+    # create X and Y
+    # X is a separate file with just the train data
+    # Y is a separate file with the corresponding target values
     X = df.loc[:, features]
     y = df['genre']
 
-    # split the dataset into testing and training data using train_test_split
+    # Split the dataset into testing and training data using train_test_split
     # X_train, X_test, y_train, y_test = train_test_split(X, y, random_state = 0)
 
-    # create an instance of the model
+    # Create and train the model
     clf = DecisionTreeClassifier(max_depth=50, class_weight="balanced")
-
-    # train that biotch
     clf.fit(X, y)  # _train, y_train)
 
-    # load our testing songs
+    # Load our testing songs
     rock_test_files = load_files("./test_songs/rock/")
     hiphop_test_files = load_files("./test_songs/hiphop/")
     pop_test_files = load_files("./test_songs/pop/")
     country_test_files = load_files("./test_songs/country/")
 
+    # Calculate predictions on test songs
     results = {}
-    # calculate predictions on test songs
-
     for path in rock_test_files:
         k, v = predict_song_genre(path, "rock")
         results[k] = v
