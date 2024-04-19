@@ -10,9 +10,9 @@ from features_to_csv import get_feature_vectors, load_files
 
 # Features from the csv file that we need to train the AI on
 # all the other data is just white noise
-features = ['chroma_stft_mean', 'chroma_stft_dev', 'spectral_centroid_mean', 'spectral_centroid_dev',
-            'spectral_rolloff_mean', 'spectral_rolloff_dev', 'mfcc_mean', 'mfcc_dev', 'rms_mean', 'rms_dev',
-            'zero_crossing_rate_mean', 'zero_crossing_rate_dev']
+features = ["chroma_stft_mean", "chroma_stft_dev", "spectral_centroid_mean", "spectral_centroid_dev",
+            "spectral_rolloff_mean", "spectral_rolloff_dev", "mfcc_mean", "mfcc_dev", "rms_mean", "rms_dev",
+            "zero_crossing_rate_mean", "zero_crossing_rate_dev"]
 
 
 def predict_song_genre(song_file_path, model, expected_genre="predict", testing=False):
@@ -22,7 +22,7 @@ def predict_song_genre(song_file_path, model, expected_genre="predict", testing=
         song_file_path (str): Path to the song file on the system
         model (str/DecisionTreeClassifier): Path of model .pkl file on the system, or DecisionTreeClassifier object
         expected_genre (str): Optional parameter for the genre you expect the audio file to be.
-        testing (bool): Optional parameter for if you are testing the functionality of the model
+        testing (bool): Optional parameter for if you are testing the model's functionality. Returns more information.
 
     Returns:
         tuple: (Song name and expected genre, (predicted genre, count of each genre prediction))
@@ -107,14 +107,13 @@ def test_model(model):
         k, v = predict_song_genre(path, model=model, expected_genre="country")
         results[k] = v
 
+    # Display results of predictions on test songs
     scores = {
         "rock": 0,
         "hiphop": 0,
         "pop": 0,
         "country": 0
     }
-
-    # Display results of predictions on test songs
     for k, v in results.items():
         print(f"{k} : {v}")
         if "rock" in k and "rock" in v[0]:
@@ -134,20 +133,24 @@ def test_model(model):
 
 
 if __name__ == "__main__":
-    # Debugging flag variables
+    # State variables
     display_model_flag = False
     test_model_flag = False
+    save_model_flag = False
+    outfile = "genre_identifier.pkl"
+    infile = "song_features_4genre_v3.csv"
+    
     # Import the csv file
-    df = pd.read_csv('song_features_4genre_v2.csv', index_col='file_name')
+    df = pd.read_csv(infile, index_col="file_name")
 
     # Map genres to numerical values
-    df['genre'] = df.genre.map({'rock': 0, 'hiphop': 1, 'pop': 2, 'country': 3})
+    df["genre"] = df.genre.map({"rock": 0, "hiphop": 1, "pop": 2, "country": 3})
 
     # create X and Y
     # X is a separate file with just the train data
     # Y is a separate file with the corresponding target values
     X = df.loc[:, features]
-    y = df['genre']
+    y = df["genre"]
 
     # Create and train the model
     clf = DecisionTreeClassifier(max_depth=50, class_weight="balanced")
@@ -164,8 +167,9 @@ if __name__ == "__main__":
         plt.figure(figsize=(9, 9), dpi=300)
         tree.plot_tree(clf,
                        feature_names=features,
-                       class_names=['rock', 'hiphop', 'pop', 'country'],
+                       class_names=["rock", "hiphop", "pop", "country"],
                        filled=True)
         plt.show()
 
-    #joblib.dump(clf, 'TEST1.pkl')
+    if save_model_flag:
+        joblib.dump(clf, outfile)

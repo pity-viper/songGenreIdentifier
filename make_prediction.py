@@ -15,16 +15,16 @@ def submit():
 '''
 file = askopenfilename()
 mfile = os.path.abspath("TEST1.pkl")
-print(predict_song_genre(file, mfile))
+print(predict_song_genre(file, mfile, testing=True))
 
-window = Tk()
+"""window = Tk()
 entry = Entry()
-#submit = Button(window, text="Submit",command=submit)
-#submit.pack(side="bottom")
-entry.config(bg=("Black"))
-entry.config(fg=("Green"))
-entry.config(font=("Times",40))
+submit = Button(window, text="Submit",command=submit)
+submit.pack(side="bottom")
+entry.config(bg="Black")
+entry.config(fg="Green")
+entry.config(font=("Times", 40))
 entry.pack()
-window.mainloop()
-print(os.path.abspath("features_to_csv.py"))
+window.mainloop()"""
+#print(os.path.abspath("features_to_csv.py"))
 
