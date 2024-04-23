@@ -92,19 +92,19 @@ def test_model(model):
     # Calculate predictions on test songs
     results = {}
     for path in rock_test_files:
-        k, v = predict_song_genre(path, model=model, expected_genre="rock")
+        k, v = predict_song_genre(path, model=model, expected_genre="rock", testing=True)
         results[k] = v
 
     for path in hiphop_test_files:
-        k, v = predict_song_genre(path, model=model, expected_genre="hiphop")
+        k, v = predict_song_genre(path, model=model, expected_genre="hiphop", testing=True)
         results[k] = v
 
     for path in pop_test_files:
-        k, v = predict_song_genre(path, model=model, expected_genre="pop")
+        k, v = predict_song_genre(path, model=model, expected_genre="pop", testing=True)
         results[k] = v
 
     for path in country_test_files:
-        k, v = predict_song_genre(path, model=model, expected_genre="country")
+        k, v = predict_song_genre(path, model=model, expected_genre="country", testing=True)
         results[k] = v
 
     # Display results of predictions on test songs
@@ -136,9 +136,9 @@ if __name__ == "__main__":
     # State variables
     display_model_flag = False
     test_model_flag = False
-    save_model_flag = False
-    outfile = "genre_identifier.pkl"
-    infile = "song_features_4genre_v3.csv"
+    save_model_flag = True
+    outfile = "genre_identifier_without_rockandwavs.pkl"
+    infile = "song_features_4genre_v3.8.5.csv"
     
     # Import the csv file
     df = pd.read_csv(infile, index_col="file_name")
