@@ -13,9 +13,16 @@ def submit():
     #entry.config(state="normal")
     #entry.insert(0,"testing")
 '''
-file = askopenfilename()
-mfile = os.path.abspath("TEST1.pkl")
-print(predict_song_genre(file, mfile, testing=True))
+
+
+def get_prediction(song_file):
+    mfile = os.path.abspath("TEST1.pkl")
+    return predict_song_genre(file, mfile, testing=False)
+
+
+if __name__ == "__main__":
+    file = askopenfilename()
+    print(get_prediction(file))
 
 """window = Tk()
 entry = Entry()

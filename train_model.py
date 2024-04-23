@@ -20,7 +20,7 @@ def predict_song_genre(song_file_path, model, expected_genre="predict", testing=
     Predict the genre of a given song, or validate that the model correctly predicts the genre of a song
     Args:
         song_file_path (str): Path to the song file on the system
-        model (str/DecisionTreeClassifier): Path of model .pkl file on the system, or DecisionTreeClassifier object
+        model (str or DecisionTreeClassifier): Path of model .pkl file on the system, or DecisionTreeClassifier object
         expected_genre (str): Optional parameter for the genre you expect the audio file to be.
         testing (bool): Optional parameter for if you are testing the model's functionality. Returns more information.
 
