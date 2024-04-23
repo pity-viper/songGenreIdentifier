@@ -130,7 +130,7 @@ if __name__ == "__main__":
     # Load the audio files
     rock_files = load_files("./dataset/rock/")
     hiphop_files = load_files("./dataset/hiphop/")
-    #country_files = load_files("./dataset/country/")
+    country_files = load_files("./dataset/country/")
     pop_files = load_files("./dataset/pop/")
 
     # Extract features for all files
@@ -142,11 +142,11 @@ if __name__ == "__main__":
     for file in hiphop_files:
         feature_vector = get_feature_vectors(file, audio_genre="hiphop")
         song_feat.extend(feature_vector)
-    '''
+
     for file in country_files:
         feature_vector = get_feature_vectors(file, audio_genre="country")
         song_feat.extend(feature_vector)
-    '''
+
     for file in pop_files:
         feature_vector = get_feature_vectors(file, audio_genre="pop")
         song_feat.extend(feature_vector)
