@@ -7,13 +7,14 @@ from train_model import predict_song_genre
 
 class TestGenreIdentifier(unittest.TestCase):
     def setUp(self):
-        self.test_file = Path("./test_songs/test_case_data/rock.00000.wav").resolve().__str__()
+        #self.test_file = Path("./test_songs/test_case_data/rock.00000.wav").resolve().__str__()
+        self.test_file = load_files("./test_songs/test_case_data/")[0].resolve().__str__()
         self.feature_vector = get_feature_vectors(self.test_file)
         self.model_file = glob.glob("TEST1.pkl")[0]
 
     def test_load_files(self):
-        self.assertIn("songGenreIdentifier/test_songs/test_case_data/rock.00000.wav", self.test_file,
-                      msg="load_files() is not working correctly")
+        test_path = Path("./test_songs/test_case_data/rock.00000.wav").resolve().__str__()
+        self.assertEqual(test_path, self.test_file, msg="load_files() is not working correctly")
 
     def test_get_genre(self):
         self.assertEqual(get_genre(self.test_file), "rock",
