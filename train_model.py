@@ -137,8 +137,8 @@ if __name__ == "__main__":
     display_model_flag = False
     test_model_flag = False
     save_model_flag = True
-    outfile = "genre_identifier_without_rockandwavs.pkl"
-    infile = "song_features_4genre_v3.8.5.csv"
+    outfile = "./models/genre_identifier_without_rockandwavs.pkl"
+    infile = "./feature_set/song_features_4genre_v3.8.5.csv"
     
     # Import the csv file
     df = pd.read_csv(infile, index_col="file_name")

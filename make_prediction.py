@@ -16,7 +16,7 @@ def submit():
 
 
 def get_prediction(song_file):
-    mfile = os.path.abspath("TEST1.pkl")
+    mfile = os.path.abspath("models/TEST1.pkl")
     return predict_song_genre(file, mfile, testing=False)
 
 

@@ -10,7 +10,7 @@ class TestGenreIdentifier(unittest.TestCase):
         #self.test_file = Path("./test_songs/test_case_data/rock.00000.wav").resolve().__str__()
         self.test_file = load_files("./test_songs/test_case_data/")[0].resolve().__str__()
         self.feature_vector = get_feature_vectors(self.test_file)
-        self.model_file = glob.glob("TEST1.pkl")[0]
+        self.model_file = glob.glob("models/TEST1.pkl")[0]
 
     def test_load_files(self):
         test_path = Path("./test_songs/test_case_data/rock.00000.wav").resolve().__str__()
